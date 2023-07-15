@@ -1,34 +1,57 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
+import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
+import '@openzeppelin/contracts/access/Ownable.sol';
 
-// Uncomment this line to use console.log
-// import "hardhat/console.sol";
+//Author : @mrinalxdev
+contract Lock  is ERC721, Ownable {
+    uint256 public mintPrice;
+    uint256 public totalSupply;
+    uint256 public maxSupply;
+    uint256 public maxPerWallet;
+    bool public isPublicMintEnable;
+    string internal baseTokenUri;
+    address payable public withdrawWallet;
+    mapping (address => uint256) public walletMints;
 
-contract Lock {
-    uint public unlockTime;
-    address payable public owner;
-
-    event Withdrawal(uint amount, uint when);
-
-    constructor(uint _unlockTime) payable {
-        require(
-            block.timestamp < _unlockTime,
-            "Unlock time should be in the future"
-        );
-
-        unlockTime = _unlockTime;
-        owner = payable(msg.sender);
+    constructor () payable ERC721('Lock', 'Lk'){
+        mintPrice = 0.0001 ether;
+        totalSupply = 0;
+        maxSupply = 1000;
+        maxPerWallet = 3;
     }
 
-    function withdraw() public {
-        // Uncomment this line, and the import of "hardhat/console.sol", to print a log in your terminal
-        // console.log("Unlock time is %o and block timestamp is %o", unlockTime, block.timestamp);
-
-        require(block.timestamp >= unlockTime, "You can't withdraw yet");
-        require(msg.sender == owner, "You aren't the owner");
-
-        emit Withdrawal(address(this).balance, block.timestamp);
-
-        owner.transfer(address(this).balance);
+    function setIsPublicMintEnabled(bool isPublicMintEnable_) external onlyOwner{
+        isPublicMintEnable = isPublicMintEnable_;
     }
+
+    function setBaseTokenUri(string calldata baseTokenUri_) external onlyOwner {
+        baseTokenUri = baseTokenUri_;
+    }
+
+    function tokenURI(uint256 tokenId_) public view override returns(string memory){
+        require(_exists(tokenId_), 'Token does not exist');
+        return string(abi.encodePacked(baseTokenUri, Strings.toString(tokenId_), '.json'));
+    }
+
+    function withdraw() external onlyOwner{
+        (bool success, ) = withdrawWallet.call{ value : address(this).balance }('');
+        require(success, 'withdraw failed');
+    }
+
+    function mint(uint256 quantity_) public payable {
+        require (isPublicMintEnable, 'minting not enabled');
+        require (msg.value == quantity_ * mintPrice, 'wring mint value');
+        require (totalSupply + quantity_ <= maxSupply, 'sold out');
+        require (walletMints[msg.sender] + quantity_ <= maxPerWallet, 'exceed max wallet');
+
+
+        for(uint256 i = 0; i < quantity_ ; i ++){
+            uint256 newTokenId = totalSupply + 1; 
+            totalSupply ++ ;
+            _safeMint(msg.sender , newTokenId);
+        }
+    }
+
 }
+
