@@ -1,35 +1,55 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import styles from "./App.module.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const editor = useEditor({
+    extensions: [StarterKit],
+    content: "<p>Hello World</p>",
+    editorProps: {
+      attributes: {
+        class: styles.textEditor,
+      },
+    },
+  });
+
+  const toggleBold = () => {
+    editor?.chain().focus().toggleBold().run();
+  };
+  const toggleItalic = () => {
+    editor?.chain().focus().toggleItalic().run();
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className={styles.pageContainer}>
+      <div className={styles.sidebar}>Sidebar</div>
+      <div className={styles.editorContainer}>
+        <div className={styles.toolbar}>
+          <button
+            className={
+              editor?.isActive("bold")
+                ? styles.toolbarButtonActive
+                : styles.toolbarButton
+            }
+            onClick={toggleBold}
+          >
+            Bold
+          </button>
+          <button
+            className={
+              editor?.isActive("italic")
+                ? styles.toolbarButtonActive
+                : styles.toolbarButton
+            }
+            onClick={toggleItalic}
+          >
+            Italic
+          </button>
+        </div>
+        <EditorContent editor={editor} className={styles.textEditorContent} />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
