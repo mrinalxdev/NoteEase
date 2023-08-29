@@ -54,3 +54,39 @@
     composes : toolbarButton;
     background-color : #e2e8f0;
 }
+
+.sidebarButton {
+    margin: 1.5rem;
+    padding: 0.5rem;
+    background-color: white;
+    border-radius: .2rem;
+    box-shadow: 0px 2px 5px 0px #e2e8f0;
+    border: 1px solid #e2e8f0;
+    font-weight: 600;
+    color: #0f172a;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+.sidebarButton:hover {
+    border: 1px solid #cbd5e1;
+    box-shadow: 0px 3px 6px 0px #cbd5e1;
+}
+.sidebarList {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    gap: 0.125rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+.sidebarItem {
+    padding: 0.5rem;
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+    cursor: pointer;
+    border-radius: 0.25rem;
+    transition: 0.3s all;
+}
+.sidebarItem:hover {
+    background-color: lightgray;
+}
