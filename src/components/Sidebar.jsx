@@ -12,7 +12,7 @@ const Sidebar = ({ notes, onAddNote, onDeleteNote }) => {
           <div className="app-sidebar-note">
             <div className="sidebar-note-title">
               <strong>{note.title}</strong>
-              <button onClick={onDeleteNote}>Delete</button>
+              <button onClick={() => onDeleteNote(note.id)}>Delete</button>
             </div>
             <p>{note.body && note.body.substr(0, 20) + "...."}</p>
 
