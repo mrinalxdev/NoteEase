@@ -1,7 +1,13 @@
+import Main from "./components/Main";
+import Sidebar from "./components/Sidebar";
+
 function App() {
   return (
     <>
-      <h1>Hello</h1>
+      <div className="App">
+        <Sidebar />
+        <Main />
+      </div>
     </>
   );
 }
